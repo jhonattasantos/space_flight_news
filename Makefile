@@ -22,13 +22,13 @@ down:
 	${DC} down --remove-orphans 
 
 db-create:
-	${DC} exec rails-app bin/rails db:create db:migrate
+	${DC} exec space-rails-api bin/rails db:create db:migrate
 
 db-migrate:
-	${DC} exec rails-app bin/rails db:migrate
+	${DC} exec space-rails-api bin/rails db:migrate
 
 db-drop:
-	${DC} exec rails-app bin/rails db:drop
+	${DC} exec space-rails-api bin/rails db:drop
 
 create-api:
-	${DC} run --no-deps rails-app rails new . --api --force --database=postgresql
+	${DC} run --no-deps space-rails-api rails new . --api --force --database=postgresql
