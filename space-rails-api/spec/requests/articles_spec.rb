@@ -17,11 +17,27 @@ RSpec.describe "/articles", type: :request do
   # Article. As you add validations to Article, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      featured: Faker::Boolean.boolean,
+      title: Faker::ChuckNorris.fact,
+      url: Faker::Internet.url,
+      imageUrl: Faker::Avatar.image,
+      newsSite: Faker::Internet.url,
+      summary: Faker::Lorem.paragraph,
+      publishedAt: Faker::Date.between(from: 2.year.ago, to: Date.today)
+    }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      featured: Faker::Boolean.boolean,
+      title: nil,
+      url: Faker::Internet.url,
+      imageUrl: Faker::Avatar.image,
+      newsSite: Faker::Internet.url,
+      summary: Faker::Lorem.paragraph,
+      publishedAt: Faker::Date.between(from: 2.year.ago, to: Date.today)
+    }
   }
 
   # This should return the minimal set of values that should be in the headers
@@ -33,18 +49,18 @@ RSpec.describe "/articles", type: :request do
   }
 
   describe "GET /index" do
-    it "renders a successful response" do
+    it "have http status equals 200 ok" do
       Article.create! valid_attributes
       get articles_url, headers: valid_headers, as: :json
-      expect(response).to be_successful
+      expect(response).to have_http_status(:ok)
     end
   end
 
   describe "GET /show" do
-    it "renders a successful response" do
+    it "have http status equals 200 ok" do
       article = Article.create! valid_attributes
       get article_url(article), as: :json
-      expect(response).to be_successful
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -55,6 +71,7 @@ RSpec.describe "/articles", type: :request do
           post articles_url,
                params: { article: valid_attributes }, headers: valid_headers, as: :json
         }.to change(Article, :count).by(1)
+        expect(response).to have_http_status(:created)
       end
 
       it "renders a JSON response with the new article" do
@@ -77,7 +94,7 @@ RSpec.describe "/articles", type: :request do
         post articles_url,
              params: { article: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to eq("application/json; charset=utf-8")
       end
     end
   end
@@ -85,7 +102,15 @@ RSpec.describe "/articles", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          featured: Faker::Boolean.boolean,
+          title: "Space Flight News 2021",
+          url: Faker::Internet.url,
+          imageUrl: Faker::Avatar.image,
+          newsSite: Faker::Internet.url,
+          summary: Faker::Lorem.paragraph,
+          publishedAt: Faker::Date.between(from: 2.year.ago, to: Date.today)
+        }
       }
 
       it "updates the requested article" do
@@ -93,7 +118,7 @@ RSpec.describe "/articles", type: :request do
         patch article_url(article),
               params: { article: new_attributes }, headers: valid_headers, as: :json
         article.reload
-        skip("Add assertions for updated state")
+        expect(article.title).to eq("Space Flight News 2021")
       end
 
       it "renders a JSON response with the article" do
@@ -101,7 +126,7 @@ RSpec.describe "/articles", type: :request do
         patch article_url(article),
               params: { article: new_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:ok)
-        expect(response.content_type).to match(a_string_including("application/json"))
+        expect(response.content_type).to match(a_string_including("application/json; charset=utf-8"))
       end
     end
 
@@ -111,7 +136,7 @@ RSpec.describe "/articles", type: :request do
         patch article_url(article),
               params: { article: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq("application/json")
+        expect(response.content_type).to eq("application/json; charset=utf-8")
       end
     end
   end
