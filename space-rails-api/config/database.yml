@@ -1,0 +1,16 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: space-db
+  username: root
+  password: root
+  pool: 5
+
+development:
+  <<: *default
+  database: space_development
+
+
+test:
+  <<: *default
+  database: space_test
