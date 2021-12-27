@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe ArticlesEvent, type: :model do
 
-  subject { @articlesEvent }
   article = Article.create(title: 'title')
   event = Event.create(origin_id: Faker::Internet.uuid, provider: 'teste')
 
