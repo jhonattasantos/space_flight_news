@@ -11,6 +11,8 @@ help:
 	@echo "  db-migrate      - migrations to database"
 	@echo "  create-api      - create api project with postgresql database"
 
+bash:
+	${DC} exec space-rails-api bash
 
 build:
 	${DC} build --no-cache
