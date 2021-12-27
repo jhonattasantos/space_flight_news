@@ -18,13 +18,16 @@ RSpec.describe "/articles", type: :request do
   # adjust the attributes here as well.
   let(:valid_attributes) {
     {
+      id: "1000",
       featured: Faker::Boolean.boolean,
       title: Faker::ChuckNorris.fact,
       url: Faker::Internet.url,
       imageUrl: Faker::Avatar.image,
       newsSite: Faker::Internet.url,
       summary: Faker::Lorem.paragraph,
-      publishedAt: Faker::Date.between(from: 2.year.ago, to: Date.today)
+      publishedAt: Faker::Date.between(from: 2.year.ago, to: Date.today),
+      events: [],
+      launches: [],
     }
   }
 
@@ -53,6 +56,8 @@ RSpec.describe "/articles", type: :request do
       Article.create! valid_attributes
       get articles_url, headers: valid_headers, as: :json
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include('events')
+      expect(response.body).to include('launches')
     end
   end
 
@@ -61,6 +66,8 @@ RSpec.describe "/articles", type: :request do
       article = Article.create! valid_attributes
       get article_url(article), as: :json
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include('events')
+      expect(response.body).to include('launches')
     end
   end
 
@@ -80,6 +87,43 @@ RSpec.describe "/articles", type: :request do
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
+
+      it "Should apply origin_id equals id field request" do
+        post articles_url, params: { article: valid_attributes }, headers: valid_headers, as: :json
+        origin_id = JSON.parse(response.body)['origin_id']
+        expect(request.params[:article][:id]).to eq(origin_id)
+      end
+
+      it 'Should create article with events' do
+        attributes = valid_attributes
+        attributes[:events] = [
+          {
+            "id": "b4cb5f4f-247d-4a14-918a-a2e56f46289e",
+            "provider": "Event Library 2"
+          }
+        ]
+        post articles_url, params: { article: attributes }, headers: valid_headers, as: :json
+        events = JSON.parse(response.body)['events']
+        
+        expect(events.length()).to eq(1)
+        expect(events[0]['origin_id']).to eq('b4cb5f4f-247d-4a14-918a-a2e56f46289e')
+      end
+
+      it 'Should create article with launches' do
+        attributes = valid_attributes
+        attributes[:launches] = [
+          {
+            "id": "b4cb5f4f-247d-4a14-918a-a2e56f46289e",
+            "provider": "Launche Library 2"
+          }
+        ]
+        post articles_url, params: { article: attributes }, headers: valid_headers, as: :json
+        launches = JSON.parse(response.body)['launches']
+        
+        expect(launches.length()).to eq(1)
+        expect(launches[0]['origin_id']).to eq('b4cb5f4f-247d-4a14-918a-a2e56f46289e')
+      end
+      
     end
 
     context "with invalid parameters" do

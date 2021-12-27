@@ -5,20 +5,52 @@ class ArticlesController < ApplicationController
   def index
     @articles = Article.all
 
-    render json: @articles
+    render json: @articles, include: [:events, :launches ]
   end
 
   # GET /articles/1
   def show
-    render json: @article
+    render json: @article, include: [:events, :launches ]
   end
 
   # POST /articles
   def create
     @article = Article.new(article_params)
+    @article.origin_id = params[:article]['id']
 
     if @article.save
-      render json: @article, status: :created, location: @article
+
+      events = params[:article]['events']
+      events.each do |event|
+        if Event.where(origin_id: event[:id]).empty?
+          @event = Event.new(origin_id:event[:id], provider: event[:provider])
+          @event.save
+
+          @articles_event = ArticlesEvent.new(article: @article, event: @event)
+          @articles_event.save
+        else
+          @event = Event.where(origin_id: event[:id]).first
+          @articles_event = ArticlesEvent.new(article: @article, event: @event)
+          @articles_event.save
+        end
+      end 
+
+      launches = params[:article]['launches']
+      launches.each do |launch|
+        if Launch.where(origin_id: launch[:id]).empty?
+          @launch = Launch.new(origin_id:launch[:id], provider: launch[:provider])
+          @launch.save
+
+          @articles_launches = ArticlesLaunch.new(article: @article, launch: @launch)
+          @articles_launches.save
+        else
+          @launch = Launch.where(origin_id: launch[:id]).first
+          @articles_launches = ArticlesLaunch.new(article: @article, launch: @launch)
+          @articles_launches.save
+        end
+      end 
+
+      render json: @article, status: :created, location: @article, include: [:events, :launches ]
     else
       render json: @article.errors, status: :unprocessable_entity
     end
@@ -46,6 +78,9 @@ class ArticlesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def article_params
-      params.require(:article).permit(:featured, :origin_id, :title, :url, :imageUrl, :newsSite, :summary, :publishedAt)
+      params.require(:article).permit(
+        :featured, :origin_id, :title, 
+        :url, :imageUrl, :newsSite, 
+        :summary, :publishedAt, :events)
     end
 end
