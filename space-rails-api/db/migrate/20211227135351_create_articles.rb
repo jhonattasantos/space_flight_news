@@ -1,8 +1,8 @@
 class CreateArticles < ActiveRecord::Migration[6.1]
   def change
-    create_table :articles do |t|
+    create_table :articles,id: :uuid do |t|
       t.boolean :featured
-      t.string :origin_id
+      t.integer :origin_id
       t.string :title
       t.string :url
       t.string :imageUrl
