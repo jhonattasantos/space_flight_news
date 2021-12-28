@@ -26,8 +26,17 @@ dev:
 pub:
 	${DC} up -d space-publisher-app
 
+pub-log:
+	${DC} logs -f space-publisher-app
+
 sub:
 	${DC} up -d space-subscriber-app
+
+sub-log:
+	${DC} logs -f space-subscriber-app
+
+unit-test:
+	${DC} exec space-rails-api rspec spec
 
 down:
 	${DC} down --remove-orphans 
