@@ -18,3 +18,19 @@ services:
       - "3000:3000"
     depends_on:
       - space-db
+  space-queue:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+  space-publisher-app:
+    image: python:3.9
+    working_dir: /publisher-app
+    volumes:
+      - ./space-article-publisher:/publisher-app
+    command: bash ./app.sh
+    depends_on:
+      - space-queue
