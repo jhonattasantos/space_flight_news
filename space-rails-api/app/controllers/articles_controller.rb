@@ -1,15 +1,13 @@
 class ArticlesController < ApplicationController
+  
+  include Paginable
+
   before_action :set_article, only: [:show, :update, :destroy]
 
   # GET /articles
   def index
-    @articles = Article.all
-
-    if(params[:_limit])
-      @articles = @articles.limit(params[:_limit])
-    end
-
-    render json: @articles, include: [:events, :launches ]
+    @articles = Article.page(current_page).per(per_page)
+    render json: { data: @articles, meta: meta_attributes(@articles) }, include: [:events, :launches ]
   end
 
   # GET /articles/1
