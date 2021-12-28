@@ -6,6 +6,11 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
+
+    if(params[:last])
+      return render json: Article.order(origin_id: :desc).limit(1)
+    end
+
     @articles = Article.page(current_page).per(per_page)
     render json: { data: @articles, meta: meta_attributes(@articles) }, include: [:events, :launches ]
   end

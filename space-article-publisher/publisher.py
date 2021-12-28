@@ -46,7 +46,7 @@ config_request_local = {
     'base_url': 'http://space-rails-api:3000'
 }
 request = HttpRequest(config_request_local)
-last_article_local = request.get(url='articles', params={'_limit': 1}).json()
+last_article_local = request.get(url='articles', params={'last': True}).json()
 last_origin_id = 0
 if (len(last_article_local) > 0):
     last_origin_id = last_article_local[0]['origin_id']
