@@ -1,0 +1,97 @@
+{
+	"info": {
+		"_postman_id": "6b438b96-5159-4ef0-b48b-269aded1e2bf",
+		"name": "Space Flight News",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Articles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/articles",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Article",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 13430,\n    \"title\": \"China launches Ziyuan-1 02E satellite via Chang Zheng 4C\",\n    \"url\": \"https://www.nasaspaceflight.com/2021/12/china-ziyuan-1-02e/\",\n    \"imageUrl\": \"https://www.nasaspaceflight.com/wp-content/uploads/2021/12/ADF302F0-0616-4CF5-A4C5-891EA3DB06EC.jpeg\",\n    \"newsSite\": \"NASA Spaceflight\",\n    \"summary\": \"China has deployed a new Earth resources observation satellite Sunday via its Chang Zheng 4C rocket. The Ziyuan-1 02E satellite, along with an amateur radio CubeSat, lifted off from the Taiyuan Satellite Launch Center at 03:11 UTC (11:11 Beijing Time).\",\n    \"publishedAt\": \"2021-12-26T15:21:36.000Z\",\n    \"updatedAt\": \"2021-12-27T00:11:12.123Z\",\n    \"featured\": false,\n    \"launches\": [\n        \n    ],\n    \"events\": [\n        {\n            \"id\": \"6f5d5bcf-3fe4-4363-8572-37d3cfca41eb\",\n            \"provider\": \"Launch Library 2\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/articles",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Article",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"featured\":true,\n    \"title\": \"Title 2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/articles/1",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"articles",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Article",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/articles/1",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"articles",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
