@@ -19,41 +19,41 @@ class ArticlesController < ApplicationController
 
   # POST /articles
   def create
+
+    article_found = Article.where(origin_id: params[:id])
+    if !article_found.empty?
+      return render status: :no_content
+    end
+
     @article = Article.new(article_params)
     @article.origin_id = params[:article]['id']
 
     if @article.save
 
-      events = params[:article]['events']
-      events.each do |event|
-        if Event.where(origin_id: event[:id]).empty?
-          @event = Event.new(origin_id:event[:id], provider: event[:provider])
-          @event.save
-
-          @articles_event = ArticlesEvent.new(article: @article, event: @event)
-          @articles_event.save
-        else
-          @event = Event.where(origin_id: event[:id]).first
-          @articles_event = ArticlesEvent.new(article: @article, event: @event)
-          @articles_event.save
+      launches = params[:launches]
+      if launches
+        launches.each do |launch|
+          launches_found = Launch.where(origin_id: launch[:id])
+          if launches_found.empty?
+            @article.launches << Launch.new(origin_id: launch[:id], provider: launch[:provider])
+          else
+            @article.launches << launches_found.first
+          end
         end
-      end 
+      end
 
-      launches = params[:article]['launches']
-      launches.each do |launch|
-        if Launch.where(origin_id: launch[:id]).empty?
-          @launch = Launch.new(origin_id:launch[:id], provider: launch[:provider])
-          @launch.save
-
-          @articles_launches = ArticlesLaunch.new(article: @article, launch: @launch)
-          @articles_launches.save
-        else
-          @launch = Launch.where(origin_id: launch[:id]).first
-          @articles_launches = ArticlesLaunch.new(article: @article, launch: @launch)
-          @articles_launches.save
+      events = params[:events]
+      if events
+        events.each do |events|
+          events_found = Event.where(origin_id: events[:id])
+          if events_found.empty?
+            @article.events << Event.new(origin_id: events[:id], provider: events[:provider])
+          else
+            @article.events << events_found.first
+          end
         end
-      end 
-
+      end
+      
       render json: @article, status: :created, location: @article, include: [:events, :launches ]
     else
       render json: @article.errors, status: :unprocessable_entity
@@ -85,6 +85,7 @@ class ArticlesController < ApplicationController
       params.require(:article).permit(
         :featured, :origin_id, :title, 
         :url, :imageUrl, :newsSite, 
-        :summary, :publishedAt, :events)
+        :summary, :publishedAt, :events,
+        :launches)
     end
 end

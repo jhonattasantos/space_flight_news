@@ -26,11 +26,21 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    depends_on:
+      - space-rails-api
+    
+  space-subscriber-app:
+    image: python:3.9
+    working_dir: /subscriber-app
+    volumes:
+      - ./space-article-subscriber:/subscriber-app
+    command: bash ./app.sh
+    depends_on:
+      - space-queue
+
   space-publisher-app:
     image: python:3.9
     working_dir: /publisher-app
     volumes:
       - ./space-article-publisher:/publisher-app
     command: bash ./app.sh
-    depends_on:
-      - space-queue
