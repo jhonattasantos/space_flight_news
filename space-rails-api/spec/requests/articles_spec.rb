@@ -18,7 +18,7 @@ RSpec.describe "/articles", type: :request do
   # adjust the attributes here as well.
   let(:valid_attributes) {
     {
-      id: "1000",
+      id: 1000,
       featured: Faker::Boolean.boolean,
       title: Faker::ChuckNorris.fact,
       url: Faker::Internet.url,
@@ -33,6 +33,7 @@ RSpec.describe "/articles", type: :request do
 
   let(:invalid_attributes) {
     {
+      id: Faker::Alphanumeric.alpha(number: 10),
       featured: Faker::Boolean.boolean,
       title: nil,
       url: Faker::Internet.url,
@@ -76,20 +77,19 @@ RSpec.describe "/articles", type: :request do
       it "creates a new Article" do
         expect {
           post articles_url,
-               params: { article: valid_attributes }, headers: valid_headers, as: :json
+               params: valid_attributes, headers: valid_headers, as: :json
         }.to change(Article, :count).by(1)
         expect(response).to have_http_status(:created)
       end
 
       it "renders a JSON response with the new article" do
-        post articles_url,
-             params: { article: valid_attributes }, headers: valid_headers, as: :json
+        post articles_url, params: valid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
 
       it "Should apply origin_id equals id field request" do
-        post articles_url, params: { article: valid_attributes }, headers: valid_headers, as: :json
+        post articles_url, params: valid_attributes, headers: valid_headers, as: :json
         origin_id = JSON.parse(response.body)['origin_id']
         expect(request.params[:article][:id]).to eq(origin_id)
       end
@@ -102,7 +102,8 @@ RSpec.describe "/articles", type: :request do
             "provider": "Event Library 2"
           }
         ]
-        post articles_url, params: { article: attributes }, headers: valid_headers, as: :json
+  
+        post articles_url, params: attributes, headers: valid_headers, as: :json
         events = JSON.parse(response.body)['events']
         
         expect(events.length()).to eq(1)
@@ -117,7 +118,7 @@ RSpec.describe "/articles", type: :request do
             "provider": "Launche Library 2"
           }
         ]
-        post articles_url, params: { article: attributes }, headers: valid_headers, as: :json
+        post articles_url, params: attributes, headers: valid_headers, as: :json
         launches = JSON.parse(response.body)['launches']
         
         expect(launches.length()).to eq(1)
@@ -129,14 +130,12 @@ RSpec.describe "/articles", type: :request do
     context "with invalid parameters" do
       it "does not create a new Article" do
         expect {
-          post articles_url,
-               params: { article: invalid_attributes }, as: :json
+          post articles_url, params: invalid_attributes, as: :json
         }.to change(Article, :count).by(0)
       end
 
       it "renders a JSON response with errors for the new article" do
-        post articles_url,
-             params: { article: invalid_attributes }, headers: valid_headers, as: :json
+        post articles_url, params: invalid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq("application/json; charset=utf-8")
       end

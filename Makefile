@@ -11,6 +11,9 @@ help:
 	@echo "  db-migrate      - migrations to database"
 	@echo "  create-api      - create api project with postgresql database"
 
+ps:
+	${DC} ps
+
 bash:
 	${DC} exec space-rails-api bash
 
@@ -18,7 +21,13 @@ build:
 	${DC} build --no-cache
 
 dev:
-	${DC} up -d
+	${DC} up -d space-rails-api space-queue
+
+pub:
+	${DC} up -d space-publisher-app
+
+sub:
+	${DC} up -d space-subscriber-app
 
 down:
 	${DC} down --remove-orphans 
