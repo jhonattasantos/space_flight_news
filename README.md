@@ -30,7 +30,7 @@ Para esse projeto você vai **precisar ter o docker instalado** na sua Máquina
 
 1. Faça o clone do projeto
   ```
-   git clone <https://github.com/jhonattasantos/space_flight_news.git> space_flight_news
+   git clone https://github.com/jhonattasantos/space_flight_news.git space_flight_news
   ```
 2. Entre no diretorio
   ```
